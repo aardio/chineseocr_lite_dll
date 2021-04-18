@@ -61,6 +61,9 @@ struct OCR_DETECT_RESULT_POINT {
  
 struct OCR_DETECT_RESULT_TEXTBLOCK { 
 	char * text;
+	float boxScore;
+	unsigned int charScoreSize;
+	float *charScores;
 	OCR_DETECT_RESULT_POINT boxPoint[4];
 };
 
@@ -95,14 +98,28 @@ extern "C" _declspec(dllexport) OCR_DETECT_RESULT * OcrDetect(OcrLite *ocrLite, 
 
 	for (int i = 0; i < textblockSize; i++) {   
 		auto tb = &ocrData.textBlocks[i];
+		auto tbOut = &result->blocks[i];
 
 		for (int j = 0; j < 4; j++) {
-			result->blocks[i].boxPoint[j].x = tb->boxPoint[j].x;
-			result->blocks[i].boxPoint[j].y = tb->boxPoint[j].y;
+			tbOut->boxPoint[j].x = tb->boxPoint[j].x;
+			tbOut->boxPoint[j].y = tb->boxPoint[j].y; 
 		}; 
 		 
-		if(tb->text.size())result->blocks[i].text = strdup(tb->text.c_str());
-		else result->blocks[i].text = nullptr;
+		if(tb->text.size())tbOut->text = strdup(tb->text.c_str());
+		else tbOut->text = nullptr;
+
+		tbOut->boxScore = tb->boxScore;
+
+		if (tb->charScores.size()) {
+			tbOut->charScoreSize = tb->charScores.size();
+			tbOut->charScores = (float *)malloc(sizeof(float)*tb->charScores.size());
+			memcpy((void *)tbOut->charScores, (void *)&tb->charScores[0], sizeof(float)*tb->charScores.size());
+		}
+		else {
+			tbOut->charScores = nullptr;
+			tbOut->charScoreSize = 0;
+		}
+
 	}
 
 	return result; 
@@ -112,6 +129,7 @@ extern "C" _declspec(dllexport) OCR_DETECT_RESULT * OcrDetect(OcrLite *ocrLite, 
 extern "C" _declspec(dllexport)  void OcrFreeDetectResult(OCR_DETECT_RESULT * result) {  
 	for (int i = 0; i < result->blockSize; i++) {  
 		if(result->blocks[i].text) free( (void *)result->blocks[i].text); 
+		if(result->blocks[i].charScores) free((void *)result->blocks[i].charScores);
 	} 
 
 	if(result->text)free((void *)result->text);

@@ -3,3 +3,5 @@
 .vs
 *.log
 
+build/Release
+build/OcrLiteOnnx.dir/Release

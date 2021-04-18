@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="ocrLite" libEmbed="true" icon="..." ui="win" output="ocrLite.exe" CompanyName="aardio" FileDescription="ocrLite" LegalCopyright="Copyright (C) aardio" ProductName="ocrLite" InternalName="ocrLite" FileVersion="0.0.0.1" ProductVersion="0.0.0.1" publishDir="/dist/" dstrip="false" local="false" ignored="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="资源文件" path="res" embed="true"/>
+</project>
